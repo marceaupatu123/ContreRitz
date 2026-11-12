@@ -1,7 +1,6 @@
 package com.contreritz.contre_ritz.repository;
 
 import com.contreritz.contre_ritz.model.User;
-import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
