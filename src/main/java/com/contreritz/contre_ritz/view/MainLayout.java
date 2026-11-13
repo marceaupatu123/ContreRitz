@@ -2,6 +2,10 @@ package com.contreritz.contre_ritz.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.StyleSheet;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -15,26 +19,48 @@ import com.vaadin.flow.router.Layout;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
-import com.vaadin.flow.spring.annotation.SpringComponent;
 
-@Layout
 @AnonymousAllowed
-@SpringComponent
+@Layout
+@StyleSheet("styles.css")
 public class MainLayout extends AppLayout {
 
-    MainLayout() {
+    public MainLayout() {
         setPrimarySection(Section.DRAWER);
-        addToDrawer(createHeader(), new Scroller(createSideNav()));
+        var scroller = new Scroller(createSideNav());
+        scroller.setSizeFull();
+
+        var drawerContent = new VerticalLayout(createHeader(), scroller, createFooter());
+        drawerContent.setSizeFull();
+        drawerContent.setPadding(false);
+        drawerContent.setSpacing(false);
+        addToDrawer(drawerContent);
+
     }
 
     private Component createHeader() {
-        var appLogo = VaadinIcon.COGS.create();
-        appLogo.setColor("#009900");
+        var userLogo = new Image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkECss14Fj_HeYboz4gzvCKx61Xh7iQkP3CJQCr8MBMw&s=10", "Ma Photo de Profil");
+        userLogo.setWidth("50px");
+        userLogo.setHeight("50px");
+        userLogo.getStyle() // C'est pour transformer l'image carrée en un cercle
+                .set("border-radius", "50%")
+                .set("object-fit", "cover");
 
-        var appName = new Span("Contre Ritz");
-        appName.getStyle().setFontWeight(Style.FontWeight.BOLD);
+        var userName = new Span("[NOM D'UTILISATEUR]");
+        userName.getStyle().setFontWeight(Style.FontWeight.BOLD);
 
-        var header = new VerticalLayout(appLogo, appName);
+        var solde = new Span("[Solde] $");
+
+        var header = new VerticalLayout(userLogo, userName, solde);
+        header.setAlignItems(FlexComponent.Alignment.CENTER);
+        return header;
+    }
+
+    private  Component createFooter() {
+        Button deconnexionButton = new Button("Déconnexion", new Icon(VaadinIcon.POWER_OFF));
+        deconnexionButton.addThemeVariants(ButtonVariant.PRIMARY, ButtonVariant.ERROR);
+
+        var header = new VerticalLayout(deconnexionButton);
         header.setAlignItems(FlexComponent.Alignment.CENTER);
         return header;
     }
