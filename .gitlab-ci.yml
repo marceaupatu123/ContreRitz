@@ -3,10 +3,23 @@ image: jetbrains/qodana-jvm-community:2025.2
 stages:
   - quality
 
+diag:
+  stage: quality
+  script:
+    - id
+    - docker version || echo "DOCKER ABSENT OU INTERDIT"
+    - mvn -v
+    - java -version
+
 qodana:
   stage: quality
+  image:
+    name: jetbrains/qodana-jvm-community:2025.2
+    entrypoint: [""]
   variables:
     GIT_DEPTH: 0
+    JAVA_TOOL_OPTIONS: "-Dfile.encoding=UTF-8"
+    LC_ALL: "C.UTF-8"
 
   cache:
     key: qodana-cache-$CI_COMMIT_REF_SLUG
