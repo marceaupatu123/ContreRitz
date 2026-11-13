@@ -1,26 +1,37 @@
-image: jetbrains/qodana-jvm-community:2025.2
-
 stages:
+  - test
   - quality
+
+maven-test:
+  stage: test
+  image: maven:3.9.9-eclipse-temurin-21
+  cache:
+    key: maven-cache
+    paths:
+      - .m2/repository
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  script:
+    - mvn -Dmaven.repo.local=.m2/repository test
+
 
 qodana:
   stage: quality
+  image: jetbrains/qodana-jvm-community:2025.2
   variables:
     GIT_DEPTH: 0
-
   cache:
     key: qodana-cache-$CI_COMMIT_REF_SLUG
     paths:
       - .qodana/cache
-
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
     - if: $CI_PIPELINE_SOURCE == "web"
-
   script:
     - qodana --cache-dir=$CI_PROJECT_DIR/.qodana/cache --results-dir=$CI_PROJECT_DIR/.qodana/results --save-report --fail-threshold 0
-
   artifacts:
     when: always
     paths:
