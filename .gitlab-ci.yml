@@ -2,36 +2,40 @@ stages:
   - test
   - quality
 
-maven-test:
-  stage: test
-  image: maven:3.9.9-eclipse-temurin-21
-  cache:
-    key: maven-cache
-    paths:
-      - .m2/repository
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_PIPELINE_SOURCE == "web"
-  script:
-    - mvn -Dmaven.repo.local=.m2/repository test
+.default_rules: &default_rules
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  - if: $CI_PIPELINE_SOURCE == "web"
 
+maven-tests:
+  stage: test
+  rules: *default_rules
+  script:
+    - mvn -B -ntp clean test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+    paths:
+      - target/surefire-reports/
+    expire_in: 1 week
 
 qodana:
   stage: quality
-  image: jetbrains/qodana-jvm-community:2025.2
   variables:
     GIT_DEPTH: 0
-  cache:
-    key: qodana-cache-$CI_COMMIT_REF_SLUG
-    paths:
-      - .qodana/cache
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH == "master"
-    - if: $CI_PIPELINE_SOURCE == "web"
+  rules: *default_rules
   script:
-    - qodana --cache-dir=$CI_PROJECT_DIR/.qodana/cache --results-dir=$CI_PROJECT_DIR/.qodana/results --save-report --fail-threshold 0
+    - mkdir -p .qodana/results .qodana/cache
+    - >
+      docker run --rm
+      --user "$(id -u):$(id -g)"
+      -v "$CI_PROJECT_DIR":/data/project
+      -v "$CI_PROJECT_DIR/.qodana/results":/data/results
+      -v "$CI_PROJECT_DIR/.qodana/cache":/data/cache
+      jetbrains/qodana-jvm-community:2025.2
+      --save-report
   artifacts:
     when: always
     paths:
