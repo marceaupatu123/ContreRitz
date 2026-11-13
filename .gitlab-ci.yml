@@ -28,6 +28,7 @@ qodana:
   rules: *default_rules
   script:
     - mkdir -p .qodana/results .qodana/cache
+    - QODANA_EXIT=0
     - >
       docker run --rm
       --user "$(id -u):$(id -g)"
@@ -35,9 +36,14 @@ qodana:
       -v "$CI_PROJECT_DIR/.qodana/results":/data/results
       -v "$CI_PROJECT_DIR/.qodana/cache":/data/cache
       jetbrains/qodana-jvm-community:2025.2
-      --save-report
+      --save-report || QODANA_EXIT=$?
+    - python3 .ci/qodana_summary.py
+    - 'echo "Qodana a terminé avec le code $QODANA_EXIT (255 = seuil de problèmes dépassé)"'
+    - exit $QODANA_EXIT
   artifacts:
     when: always
     paths:
       - .qodana/results/
+    reports:
+      codequality: gl-code-quality-report.json
     expire_in: 1 week
