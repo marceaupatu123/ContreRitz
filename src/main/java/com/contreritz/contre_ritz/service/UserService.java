@@ -2,6 +2,7 @@ package com.contreritz.contre_ritz.service;
 
 import com.contreritz.contre_ritz.model.User;
 import com.contreritz.contre_ritz.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -40,10 +41,11 @@ public class UserService {
      * @param rawPassword le mot de passe en clair saisi par le visiteur
      * @param nom         le nom de famille de l'utilisateur
      * @param prenom      le prénom de l'utilisateur
-     * @return l'entité {@link User} nouvellement créée et persistée (avec son ID généré)
      * @throws IllegalArgumentException si l'adresse email est déjà associée à un compte existant
      */
-    public User inscrire(String email, String rawPassword, String nom, String prenom) {
+
+    @Transactional // Bon ici ça sert un peu à rien car y'a qu'un .save() mais c'est une bonne pratique !
+    public void inscrire(String email, String rawPassword, String nom, String prenom) {
         // Vérification anti-doublon
         if (userRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("Cet email est déjà utilisé.");
@@ -57,6 +59,6 @@ public class UserService {
         theUser.setPrenom(prenom);
 
         // Sauvegarde et renvoie l'utilisateur créé
-        return userRepository.save(theUser);
+        userRepository.save(theUser);
     }
 }
