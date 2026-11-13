@@ -1,8 +1,6 @@
 package com.contreritz.contre_ritz.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 
 /**
  * Entité JPA représentant un utilisateur de l'application en base de données.
@@ -10,7 +8,6 @@ import jakarta.validation.constraints.NotBlank;
  * Mappée sur la table {@code users} (le nom {@code user} étant un mot-clé réservé en SQL).
  * </p>
  */
-@SuppressWarnings("unused")
 @Entity
 @Table(name = "users")
 public class User {
@@ -25,28 +22,23 @@ public class User {
     /**
      * Adresse email unique servant d'identifiant de connexion. Ne peut pas être nulle.
      */
-    @NotBlank(message = "L'email est obligatoire")
-    @Email(message = "Format d'email invalide")
     @Column(unique = true, nullable = false)
     private String email;
 
     /**
      * Mot de passe de l'utilisateur stocké sous forme hachée (BCrypt). Ne peut pas être nul.
      */
-    @NotBlank(message = "Le mot de passe est obligatoire")
     @Column(nullable = false)
     private String password;
 
     /**
      * Nom de famille de l'utilisateur.
      */
-    @NotBlank(message = "Le nom est obligatoire")
     private String nom;
 
     /**
      * Prénom de l'utilisateur.
      */
-    @NotBlank(message = "Le prénom est obligatoire")
     private String prenom;
 
     /**
