@@ -1,6 +1,24 @@
 stages:
   - test
   - quality
+  - review
+
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+default:
+  interruptible: true
+  cache:
+    key:
+      files:
+        - pom.xml
+    paths:
+      - .m2/repository
+      - .qodana/cache
 
 .default_rules: &default_rules
   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -47,3 +65,11 @@ qodana:
     reports:
       codequality: gl-code-quality-report.json
     expire_in: 1 week
+
+approval-check:
+  stage: review
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  cache: []
+  script:
+    - python3 .ci/approval_check.py
