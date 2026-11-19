@@ -6,11 +6,12 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("home")
-@Menu(title = "Home", icon = "vaadin:home")
+@Menu(title = "Accueil", icon = "vaadin:home")
 @AnonymousAllowed
 class HomeView extends VerticalLayout {
 
     HomeView() {
         add("Voici la page d'accueil !");
+
     }
 }

@@ -2,10 +2,11 @@ package com.contreritz.contre_ritz.view;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.avatar.AvatarVariant;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.StyleSheet;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -14,15 +15,17 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Layout;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
+import com.vaadin.flow.theme.aura.Aura;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
-@AnonymousAllowed
+@SuppressWarnings("unused") // Utilisée par Vaadin grâce à @Layout.
+@AnonymousAllowed // TODO: Penser à restreindre l'accès quand on aura ajouté une logique de sécurité.
 @Layout
-@StyleSheet("styles.css")
+@StyleSheet(Aura.STYLESHEET)
 public class MainLayout extends AppLayout {
 
     public MainLayout() {
@@ -35,30 +38,29 @@ public class MainLayout extends AppLayout {
         drawerContent.setPadding(false);
         drawerContent.setSpacing(false);
         addToDrawer(drawerContent);
-
     }
 
     private Component createHeader() {
-        var userLogo = new Image("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkECss14Fj_HeYboz4gzvCKx61Xh7iQkP3CJQCr8MBMw&s=10", "Ma Photo de Profil");
-        userLogo.setWidth("50px");
-        userLogo.setHeight("50px");
-        userLogo.getStyle() // C'est pour transformer l'image carrée en un cercle
-                .set("border-radius", "50%")
-                .set("object-fit", "cover");
+        String username = "Maeva Martin Fontaine"; // TODO: Penser à mettre le vrai nom de l'utilisateur.
 
-        var userName = new Span("[NOM D'UTILISATEUR]");
-        userName.getStyle().setFontWeight(Style.FontWeight.BOLD);
+        Avatar userAvatar = new Avatar(username);
+        userAvatar.addThemeVariants(AvatarVariant.LUMO_XLARGE); // c'est en gros pour dire que mon avatar doit être en L.
 
-        var solde = new Span("[Solde] $");
+        var userName = new Span(username);
+        userName.addClassNames(LumoUtility.FontWeight.BOLD);
 
-        var header = new VerticalLayout(userLogo, userName, solde);
+        var solde = new Span("67€"); // TODO: Penser à mettre le vrai solde du User.
+
+        var header = new VerticalLayout(userAvatar, userName, solde);
         header.setAlignItems(FlexComponent.Alignment.CENTER);
+        header.addClassNames(LumoUtility.TextAlignment.CENTER);
         return header;
     }
 
-    private  Component createFooter() {
+    private Component createFooter() {
         Button deconnexionButton = new Button("Déconnexion", new Icon(VaadinIcon.POWER_OFF));
         deconnexionButton.addThemeVariants(ButtonVariant.PRIMARY, ButtonVariant.ERROR);
+        deconnexionButton.setWidthFull();
 
         var header = new VerticalLayout(deconnexionButton);
         header.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -67,8 +69,7 @@ public class MainLayout extends AppLayout {
 
     private SideNav createSideNav() {
         var nav = new SideNav();
-        MenuConfiguration.getMenuEntries()
-                .forEach(entry -> nav.addItem(createSideNavItem(entry)));
+        MenuConfiguration.getMenuEntries().forEach(entry -> nav.addItem(createSideNavItem(entry)));
         return nav;
     }
 
