@@ -37,6 +37,7 @@ public class User implements UserDetails {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SuppressWarnings("NullableProblems") // Alerte purement liée à la génération de code par l'IDE (annotation Nullable par défaut)
     @Nullable
     private Long id;
 

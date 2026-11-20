@@ -81,7 +81,19 @@ public class RegisterView extends VerticalLayout {
         H1 titre = new H1("Inscription");
         titre.addClassName(LumoUtility.TextAlignment.CENTER);
 
-        // Carte centrée qui regroupe le titre, les champs et le bouton (comme le LoginForm)
+        add(creerCarte(titre, formulaire, valider));
+    }
+
+    /**
+     * Regroupe le titre, les champs et le bouton dans une carte centrée
+     * (même aspect que le {@code LoginForm} de la page de connexion).
+     *
+     * @param titre      le titre de la page
+     * @param formulaire les champs du formulaire
+     * @param valider    le bouton d'envoi
+     * @return la carte prête à être ajoutée à la page
+     */
+    private VerticalLayout creerCarte(H1 titre, FormLayout formulaire, Button valider) {
         VerticalLayout carte = new VerticalLayout(titre, formulaire, valider);
         carte.addClassNames(
                 LumoUtility.MaxWidth.SCREEN_SMALL,
@@ -89,7 +101,6 @@ public class RegisterView extends VerticalLayout {
                 LumoUtility.Border.ALL,
                 LumoUtility.BorderColor.CONTRAST_10,
                 LumoUtility.BorderRadius.LARGE);
-
-        add(carte);
+        return carte;
     }
 }
