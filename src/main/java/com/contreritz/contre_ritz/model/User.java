@@ -1,6 +1,6 @@
 package com.contreritz.contre_ritz.model;
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -46,26 +46,26 @@ public class User implements UserDetails {
     @NotBlank(message = "L'email est obligatoire")
     @Email(message = "Format d'email invalide")
     @Column(unique = true, nullable = false)
-    private String email;
+    private String email = "";
 
     /**
      * Mot de passe de l'utilisateur stocké sous forme hachée (BCrypt).
      */
     @NotBlank(message = "Le mot de passe est obligatoire")
     @Column(nullable = false)
-    private String password;
+    private String password = "";
 
     /**
      * Nom de famille de l'utilisateur.
      */
     @NotBlank(message = "Le nom est obligatoire")
-    private String nom;
+    private String nom = "";
 
     /**
      * Prénom de l'utilisateur.
      */
     @NotBlank(message = "Le prénom est obligatoire")
-    private String prenom;
+    private String prenom = "";
 
     /**
      * Constructeur par défaut sans arguments requis par la spécification JPA/Hibernate.
