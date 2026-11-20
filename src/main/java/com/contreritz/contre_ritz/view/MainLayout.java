@@ -1,12 +1,12 @@
 package com.contreritz.contre_ritz.view;
 
+import com.contreritz.contre_ritz.model.User;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.avatar.AvatarVariant;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -16,32 +16,37 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.Layout;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
-import com.vaadin.flow.theme.aura.Aura;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import jakarta.annotation.security.PermitAll;
 
 @SuppressWarnings("unused") // Utilisée par Vaadin grâce à @Layout.
-@AnonymousAllowed // TODO: Penser à restreindre l'accès quand on aura ajouté une logique de sécurité.
 @Layout
-@StyleSheet(Aura.STYLESHEET)
+@PermitAll
 public class MainLayout extends AppLayout {
 
-    public MainLayout() {
+    private AuthenticationContext auth;
+
+    public MainLayout(AuthenticationContext auth) {
         setPrimarySection(Section.DRAWER);
         var scroller = new Scroller(createSideNav());
         scroller.setSizeFull();
 
-        var drawerContent = new VerticalLayout(createHeader(), scroller, createFooter());
+        var drawerContent = new VerticalLayout(createHeader(auth), scroller, createFooter(auth));
         drawerContent.setSizeFull();
         drawerContent.setPadding(false);
         drawerContent.setSpacing(false);
         addToDrawer(drawerContent);
     }
 
-    private Component createHeader() {
-        String username = "Maeva Martin Fontaine"; // TODO: Penser à mettre le vrai nom de l'utilisateur.
+    private Component createHeader(AuthenticationContext auth) {
+        User monUser = auth
+                .getAuthenticatedUser(User.class)
+                .orElseThrow(() -> new IllegalStateException("Utilisateur non connecté"));
+
+        String username = monUser.getPrenom() + " " + monUser.getNom();
 
         Avatar userAvatar = new Avatar(username);
         userAvatar.addThemeVariants(AvatarVariant.LUMO_XLARGE); // c'est en gros pour dire que mon avatar doit être en L.
@@ -57,8 +62,8 @@ public class MainLayout extends AppLayout {
         return header;
     }
 
-    private Component createFooter() {
-        Button deconnexionButton = new Button("Déconnexion", new Icon(VaadinIcon.POWER_OFF));
+    private Component createFooter(AuthenticationContext auth) {
+        Button deconnexionButton = new Button("Déconnexion", new Icon(VaadinIcon.POWER_OFF), event -> auth.logout());
         deconnexionButton.addThemeVariants(ButtonVariant.PRIMARY, ButtonVariant.ERROR);
         deconnexionButton.setWidthFull();
 
@@ -69,7 +74,9 @@ public class MainLayout extends AppLayout {
 
     private SideNav createSideNav() {
         var nav = new SideNav();
-        MenuConfiguration.getMenuEntries().forEach(entry -> nav.addItem(createSideNavItem(entry)));
+        MenuConfiguration
+                .getMenuEntries()
+                .forEach(entry -> nav.addItem(createSideNavItem(entry)));
         return nav;
     }
 

@@ -18,9 +18,8 @@ import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 
-@Route("register")
+@Route(value = "register", autoLayout = false)
 @PageTitle("Inscription")
 @AnonymousAllowed
 public class RegisterView extends VerticalLayout {
@@ -67,40 +66,34 @@ public class RegisterView extends VerticalLayout {
             if (binder.writeBeanIfValid(form)) {
                 userService.inscrire(form.getEmail(), form.getPassword(), form.getNom(), form.getPrenom());
                 Notification.show("Compte créé, vous pouvez vous connecter");
-                UI.getCurrent().navigate("login");
+                UI
+                        .getCurrent()
+                        .navigate("login");
             }
         });
         valider.addThemeVariants(ButtonVariant.PRIMARY);
-        valider.addClassName(LumoUtility.Width.FULL);
+        valider.setWidthFull();
 
-        // Une seule colonne, pour que tous les champs aient la même largeur
-        FormLayout formulaire = new FormLayout(prenom, nom, email, password);
+        FormLayout formulaire = new FormLayout(prenom, nom, email, password, valider);
         formulaire.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1));
 
-        // Le titre
-        H1 titre = new H1("Inscription");
-        titre.addClassName(LumoUtility.TextAlignment.CENTER);
-
-        add(creerCarte(titre, formulaire, valider));
+        add(creerCarte(new H1("Inscription"), formulaire));
     }
 
     /**
-     * Regroupe le titre, les champs et le bouton dans une carte centrée
+     * Regroupe le titre et le formulaire (champs et bouton) dans une carte centrée
      * (même aspect que le {@code LoginForm} de la page de connexion).
      *
      * @param titre      le titre de la page
-     * @param formulaire les champs du formulaire
-     * @param valider    le bouton d'envoi
+     * @param formulaire les champs du formulaire et le bouton d'envoi
      * @return la carte prête à être ajoutée à la page
      */
-    private VerticalLayout creerCarte(H1 titre, FormLayout formulaire, Button valider) {
-        VerticalLayout carte = new VerticalLayout(titre, formulaire, valider);
-        carte.addClassNames(
-                LumoUtility.MaxWidth.SCREEN_SMALL,
-                LumoUtility.Padding.LARGE,
-                LumoUtility.Border.ALL,
-                LumoUtility.BorderColor.CONTRAST_10,
-                LumoUtility.BorderRadius.LARGE);
+    private VerticalLayout creerCarte(H1 titre, FormLayout formulaire) {
+        VerticalLayout carte = new VerticalLayout(titre, formulaire);
+        carte.setWidthFull();
+        carte.setMaxWidth("400px");
+        carte.setPadding(true);
+        carte.setHorizontalComponentAlignment(Alignment.CENTER, titre);
         return carte;
     }
 }

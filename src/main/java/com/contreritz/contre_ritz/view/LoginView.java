@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -28,7 +29,7 @@ import org.springframework.security.web.csrf.CsrfToken;
  * et doit rester accessible sans être connecté ({@link AnonymousAllowed}).
  * </p>
  */
-@Route("login")
+@Route(value = "login", autoLayout = false)
 @PageTitle("Connexion")
 @AnonymousAllowed
 @JsModule("./webauthn.js") // Script d'accès à l'API WebAuthn du navigateur (passkeys)
@@ -51,6 +52,18 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
 
         // Les identifiants sont envoyés à Spring Security, qui les vérifie
         loginForm.setAction("login");
+
+        LoginI18n i18n = new LoginI18n();
+
+        LoginI18n.Form i18nForm = new LoginI18n.Form();
+        i18nForm.setTitle("");
+        i18nForm.setUsername("Email");
+        i18nForm.setPassword("Mot de passe");
+        i18nForm.setSubmit("Se connecter");
+        i18nForm.setForgotPassword("Mot de passe oublié ?");
+
+        i18n.setForm(i18nForm);
+        loginForm.setI18n(i18n);
 
         Button passkeyButton = new Button("Se connecter avec un passkey", e -> signInWithPasskey());
 
