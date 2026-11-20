@@ -37,6 +37,14 @@ build/
 ### Vaadin ###
 src/main/frontend/generated/
 src/main/bundles/
+# Générés automatiquement par Vaadin s'ils manquent (à commiter seulement s'ils sont personnalisés)
+tsconfig.json
+types.d.ts
+vite.generated.ts
+
+### Secrets et logs ###
+.env
+*.log
 ### CI ###
 .m2/
 .qodana/
