@@ -73,3 +73,19 @@ approval-check:
   cache: []
   script:
     - python3 .ci/approval_check.py
+
+# Génère SUIVI_TEMPS.md (temps noté avec /spend, par personne) et le garde en artefact.
+# Se lance à la main depuis le pipeline, ou automatiquement via une planification (Pipeline schedules).
+suivi-temps:
+  stage: review
+  cache: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - when: manual
+      allow_failure: true
+  script:
+    - python3 .ci/suivi_temps.py
+  artifacts:
+    paths:
+      - SUIVI_TEMPS.md
+    expire_in: 1 month
