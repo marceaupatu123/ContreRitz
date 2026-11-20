@@ -12,6 +12,11 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.webauthn.management.JdbcPublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.JdbcUserCredentialRepository;
+import org.springframework.security.web.webauthn.management.PublicKeyCredentialUserEntityRepository;
+import org.springframework.security.web.webauthn.management.UserCredentialRepository;
+import org.springframework.jdbc.core.JdbcOperations;
 
 @EnableWebSecurity
 @Configuration
@@ -45,6 +50,24 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * Stocke les passkeys (clés publiques) dans la table {@code user_credentials}.
+     * Spring Security détecte ce bean et l'utilise à la place du stockage en mémoire.
+     */
+    @Bean
+    public UserCredentialRepository userCredentialRepository(JdbcOperations jdbc) {
+        return new JdbcUserCredentialRepository(jdbc);
+    }
+
+    /**
+     * Stocke le lien utilisateur / passkeys dans la table {@code user_entities}
+     * (le nom correspond à l'email de l'utilisateur).
+     */
+    @Bean
+    public PublicKeyCredentialUserEntityRepository publicKeyCredentialUserEntityRepository(JdbcOperations jdbc) {
+        return new JdbcPublicKeyCredentialUserEntityRepository(jdbc);
     }
 
 }

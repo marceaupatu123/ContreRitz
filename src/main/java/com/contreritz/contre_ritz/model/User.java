@@ -17,6 +17,12 @@ import java.util.Optional;
  * Entité JPA représentant un utilisateur de l'application en base de données.
  * <p>
  * Mappée sur la table {@code users} (le nom {@code user} étant un mot-clé réservé en SQL).
+ * Implémente {@link UserDetails} pour s'intégrer directement au mécanisme d'authentification
+ * de Spring Security.
+ * </p>
+ * <p>
+ * Annotée {@link NullMarked} : tous les paramètres et valeurs de retour sont considérés
+ * non nuls par défaut, sauf mention explicite via {@link Nullable}.
  * </p>
  */
 @SuppressWarnings("unused")
@@ -27,6 +33,7 @@ public class User implements UserDetails {
 
     /**
      * Identifiant unique de l'utilisateur, généré automatiquement par la base de données.
+     * Est {@code null} tant que l'entité n'a pas été persistée.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +41,7 @@ public class User implements UserDetails {
     private Long id;
 
     /**
-     * Adresse email unique servant d'identifiant de connexion. Ne peut pas être nulle.
+     * Adresse email unique servant d'identifiant de connexion.
      */
     @NotBlank(message = "L'email est obligatoire")
     @Email(message = "Format d'email invalide")
@@ -42,7 +49,7 @@ public class User implements UserDetails {
     private String email;
 
     /**
-     * Mot de passe de l'utilisateur stocké sous forme hachée (BCrypt). Ne peut pas être nul.
+     * Mot de passe de l'utilisateur stocké sous forme hachée (BCrypt).
      */
     @NotBlank(message = "Le mot de passe est obligatoire")
     @Column(nullable = false)
@@ -67,9 +74,11 @@ public class User implements UserDetails {
     }
 
     /**
-     * Retourne l'identifiant unique de l'utilisateur.
+     * Retourne l'identifiant unique de l'utilisateur encapsulé dans un {@link Optional}.
      *
-     * @return l'identifiant généré en base, ou {@code null} si l'entité n'est pas encore persistée
+     * @return un {@link Optional} contenant l'identifiant généré en base
+     * @throws AssertionError si l'entité n'a pas encore été persistée ({@code id == null})
+     *                        et que les assertions JVM ({@code -ea}) sont activées
      */
     public Optional<Long> getId() {
         assert id != null;
@@ -124,8 +133,9 @@ public class User implements UserDetails {
     /**
      * Retourne le mot de passe haché de l'utilisateur.
      *
-     * @return le empreinte (hash) BCrypt du mot de passe
+     * @return l'empreinte (hash) BCrypt du mot de passe
      */
+    @Override
     public String getPassword() {
         return password;
     }
@@ -137,7 +147,7 @@ public class User implements UserDetails {
      * </p>
      *
      * @return l'adresse email
-     * @deprecated à usage exclusif de Spring Security, utiliser {@link #getEmail()}
+     * @deprecated À usage exclusif de Spring Security ; préférer {@link #getEmail()} dans le code applicatif.
      */
     @Deprecated
     @Override

@@ -5,6 +5,8 @@ import com.contreritz.contre_ritz.repository.UserRepository;
 import com.contreritz.contre_ritz.service.UserService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,6 +18,7 @@ import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 @Route("register")
 @PageTitle("Inscription")
@@ -67,7 +70,26 @@ public class RegisterView extends VerticalLayout {
                 UI.getCurrent().navigate("login");
             }
         });
+        valider.addThemeVariants(ButtonVariant.PRIMARY);
+        valider.addClassName(LumoUtility.Width.FULL);
 
-        add(new H1("Inscription"), prenom, nom, email, password, valider);
+        // Une seule colonne, pour que tous les champs aient la même largeur
+        FormLayout formulaire = new FormLayout(prenom, nom, email, password);
+        formulaire.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 1));
+
+        // Le titre
+        H1 titre = new H1("Inscription");
+        titre.addClassName(LumoUtility.TextAlignment.CENTER);
+
+        // Carte centrée qui regroupe le titre, les champs et le bouton (comme le LoginForm)
+        VerticalLayout carte = new VerticalLayout(titre, formulaire, valider);
+        carte.addClassNames(
+                LumoUtility.MaxWidth.SCREEN_SMALL,
+                LumoUtility.Padding.LARGE,
+                LumoUtility.Border.ALL,
+                LumoUtility.BorderColor.CONTRAST_10,
+                LumoUtility.BorderRadius.LARGE);
+
+        add(carte);
     }
 }
