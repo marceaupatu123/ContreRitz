@@ -1,6 +1,5 @@
 package com.contreritz.contre_ritz.config;
 
-import com.contreritz.contre_ritz.repository.UserRepository;
 import com.contreritz.contre_ritz.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -19,16 +18,15 @@ import org.springframework.context.annotation.Profile;
 public class DevDataInitializer {
 
     /**
-     * Crée l'utilisateur {@code alice@test.fr} s'il n'existe pas déjà.
+     * Crée l'utilisateur {@code maeva@test.fr} s'il n'existe pas déjà.
      *
-     * @param userService service d'inscription (hache le mot de passe)
-     * @param repo        dépôt utilisé pour vérifier l'existence du compte
+     * @param userService service d'inscription (hache le mot de passe) et de vérification d'existence du compte
      * @return le runner exécuté au démarrage
      */
     @Bean
-    CommandLineRunner initUsers(UserService userService, UserRepository repo) {
+    CommandLineRunner initUsers(UserService userService) {
         return args -> {
-            if (!repo.existsByEmail("maeva@test.fr")) {
+            if (!userService.isEmailUsed("maeva@test.fr")) {
                 userService.inscrire("maeva@test.fr", "test", "Martin Fontaine", "Maeva");
             }
         };

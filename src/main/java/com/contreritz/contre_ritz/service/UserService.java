@@ -44,10 +44,24 @@ public class UserService {
      * @throws IllegalArgumentException si l'adresse email est déjà associée à un compte existant
      */
 
+    /**
+     * Indique si une adresse email est déjà associée à un compte.
+     * <p>
+     * Permet aux vues (par exemple le formulaire d'inscription) de prévenir l'utilisateur
+     * sans accéder directement au repository.
+     * </p>
+     *
+     * @param email l'adresse email à vérifier
+     * @return {@code true} si un compte utilise déjà cet email, {@code false} sinon
+     */
+    public boolean isEmailUsed(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     @Transactional // Bon ici ça sert un peu à rien car y'a qu'un .save() mais c'est une bonne pratique !
     public void inscrire(String email, String rawPassword, String nom, String prenom) {
         // Vérification anti-doublon
-        if (userRepository.existsByEmail(email)) {
+        if (isEmailUsed(email)) {
             throw new IllegalArgumentException("Cet email est déjà utilisé.");
         }
 

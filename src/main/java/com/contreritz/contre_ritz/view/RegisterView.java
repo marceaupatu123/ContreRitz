@@ -1,7 +1,6 @@
 package com.contreritz.contre_ritz.view;
 
 import com.contreritz.contre_ritz.dto.RegisterForm;
-import com.contreritz.contre_ritz.repository.UserRepository;
 import com.contreritz.contre_ritz.service.UserService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -25,7 +24,7 @@ import com.vaadin.flow.theme.lumo.LumoUtility;
 @AnonymousAllowed
 public class RegisterView extends VerticalLayout {
 
-    public RegisterView(UserService userService, UserRepository userRepository) {
+    public RegisterView(UserService userService) {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -53,7 +52,7 @@ public class RegisterView extends VerticalLayout {
                 .forField(email)
                 .asRequired("Email obligatoire")
                 .withValidator(new EmailValidator("Format d'email invalide"))
-                .withValidator(v -> !userRepository.existsByEmail(v), "Cet email est déjà utilisé")
+                .withValidator(v -> !userService.isEmailUsed(v), "Cet email est déjà utilisé")
                 .bind(RegisterForm::getEmail, RegisterForm::setEmail);
 
         binder
