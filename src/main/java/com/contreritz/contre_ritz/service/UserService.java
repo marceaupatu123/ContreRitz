@@ -30,19 +30,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * Inscrit un nouvel utilisateur dans l'application.
-     * <p>
-     * Vérifie que l'adresse email n'est pas déjà enregistrée, hache le mot de passe
-     * en clair via BCrypt, puis sauvegarde l'entité en base de données.
-     * </p>
-     *
-     * @param email       l'adresse email unique de l'utilisateur
-     * @param rawPassword le mot de passe en clair saisi par le visiteur
-     * @param nom         le nom de famille de l'utilisateur
-     * @param prenom      le prénom de l'utilisateur
-     * @throws IllegalArgumentException si l'adresse email est déjà associée à un compte existant
-     */
 
     /**
      * Indique si une adresse email est déjà associée à un compte.
@@ -57,6 +44,20 @@ public class UserService {
     public boolean isEmailUsed(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    /**
+     * Inscrit un nouvel utilisateur dans l'application.
+     * <p>
+     * Vérifie que l'adresse email n'est pas déjà enregistrée, hache le mot de passe
+     * en clair via BCrypt, puis sauvegarde l'entité en base de données.
+     * </p>
+     *
+     * @param email       l'adresse email unique de l'utilisateur
+     * @param rawPassword le mot de passe en clair saisi par le visiteur
+     * @param nom         le nom de famille de l'utilisateur
+     * @param prenom      le prénom de l'utilisateur
+     * @throws IllegalArgumentException si l'adresse email est déjà associée à un compte existant
+     */
 
     @Transactional // Bon ici ça sert un peu à rien car y'a qu'un .save() mais c'est une bonne pratique !
     public void inscrire(String email, String rawPassword, String nom, String prenom) {
