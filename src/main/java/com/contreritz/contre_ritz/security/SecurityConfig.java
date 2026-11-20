@@ -20,6 +20,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, SecurityContextHolderStrategy securityContextHolderStrategy) {
 
+        // Un peu compliqué a expliqué et j'ai pas tout compris mais en gros faut le laisser pour le WebAuthN.
         SecurityContextHolder.setContextHolderStrategy(securityContextHolderStrategy);
 
         // Autorise mes routes

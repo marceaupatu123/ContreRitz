@@ -15,6 +15,12 @@ import org.springframework.stereotype.Service;
  * puis compare le mot de passe saisi avec le hash stocké en base.
  * </p>
  * <p>
+ * <strong>Cette classe n'est jamais appelée directement dans le code de l'application :</strong>
+ * Spring la détecte automatiquement (c'est un {@code @Service} qui implémente
+ * {@link UserDetailsService}) et l'utilise lui-même. Pour rechercher un utilisateur depuis
+ * le code métier ou une vue, utiliser {@link UserService}.
+ * </p>
+ * <p>
  * Cette classe ne gère que la <strong>recherche</strong> de l'utilisateur pour la sécurité.
  * La logique métier (inscription, etc.) reste dans {@link UserService}.
  * </p>
