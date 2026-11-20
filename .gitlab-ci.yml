@@ -30,13 +30,20 @@ maven-tests:
   rules: *default_rules
   script:
     - mvn -B -ntp clean test
+  after_script:
+    - python3 .ci/coverage_summary.py
+  coverage: '/Couverture des lignes \(service \+ repository\) : (\d+(?:\.\d+)?)%/'
   artifacts:
     when: always
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
+      coverage_report:
+        coverage_format: jacoco
+        path: target/site/jacoco/jacoco.xml
     paths:
       - target/surefire-reports/
+      - target/site/jacoco/
     expire_in: 1 week
 
 qodana:
