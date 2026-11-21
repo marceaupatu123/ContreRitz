@@ -37,7 +37,7 @@ public class User implements UserDetails {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @SuppressWarnings("NullableProblems") // Alerte purement liée à la génération de code par l'IDE (annotation Nullable par défaut)
+    @SuppressWarnings("NullableProblems")
     @Nullable
     private Long id;
 
@@ -203,5 +203,14 @@ public class User implements UserDetails {
      */
     public void setPrenom(String prenom) {
         this.prenom = prenom;
+    }
+
+    /**
+     * Retourne le nom d'affichage de l'utilisateur.
+     *
+     * @return le nom d'affichage
+     */
+    public String getDisplayName() {
+        return prenom + " " + nom;
     }
 }

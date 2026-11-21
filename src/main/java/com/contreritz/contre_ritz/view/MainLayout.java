@@ -46,12 +46,12 @@ public class MainLayout extends AppLayout {
                 .getAuthenticatedUser(User.class)
                 .orElseThrow(() -> new IllegalStateException("Utilisateur non connecté"));
 
-        String username = monUser.getPrenom() + " " + monUser.getNom();
+        String displayName = monUser.getDisplayName();
 
-        Avatar userAvatar = new Avatar(username);
+        Avatar userAvatar = new Avatar(displayName);
         userAvatar.addThemeVariants(AvatarVariant.LUMO_XLARGE); // c'est en gros pour dire que mon avatar doit être en L.
 
-        var userName = new Span(username);
+        var userName = new Span(displayName);
         userName.addClassNames(LumoUtility.FontWeight.BOLD);
 
         var solde = new Span("67€"); // TODO: Penser à mettre le vrai solde du User.
